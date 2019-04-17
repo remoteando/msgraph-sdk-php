@@ -21,6 +21,13 @@ use GuzzleHttp\Client;
 use Microsoft\Graph\Core\GraphConstants;
 use Microsoft\Graph\Exception\GraphException;
 
+use GuzzleHttp\HandlerStack;
+use Kevinrob\GuzzleCache\CacheMiddleware;
+
+use Illuminate\Support\Facades\Cache;
+use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
+use Kevinrob\GuzzleCache\Storage\LaravelCacheStorage;
+
 /**
  * Class GraphRequest
  *
@@ -463,6 +470,23 @@ class GraphRequest
             $clientSettings['verify'] = false;
             $clientSettings['proxy'] = $this->proxyPort;
         } 
+        
+        // Create default HandlerStack
+        $stack = HandlerStack::create();
+        
+        // Create cache strategy
+        $cacheStrategy = new PrivateCacheStrategy(
+          new LaravelCacheStorage(
+            Cache::store('redis')
+          )
+        );
+
+        // Add this middleware to the top with `push`
+        $stack->push(new CacheMiddleware($cacheStrategy), 'cache');
+
+        // Initialize the client with the handler option
+        $client = new Client(['handler' => $stack]);
+        
         $client = new Client($clientSettings);
         
         return $client;
