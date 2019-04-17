@@ -1,7 +1,7 @@
 {
-	"name": "microsoft/microsoft-graph",
+	"name": "remoteando/cached-microsoft-graph",
 	"type": "library",
-	"description": "The Microsoft Graph SDK for PHP",
+	"description": "The Microsoft Graph SDK for PHP, with added Guzzle caching support",
 	"homepage": "https://graph.microsoft.io/en-us/",
 	"license": "MIT",
 	"authors": [
